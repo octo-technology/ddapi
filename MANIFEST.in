@@ -1,0 +1,2 @@
+include dd/tests/acceptance/getting_started/*.ipynb
+include LICENSE.txt

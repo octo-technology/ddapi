@@ -1,0 +1,1 @@
+.. mdinclude:: ../DEVGUIDE.md

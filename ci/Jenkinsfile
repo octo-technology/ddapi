@@ -1,0 +1,118 @@
+#!groovy​
+
+def BUILD_FOLDER = 'dist'
+def REPORTS_FOLDER = "reports"
+def packageName = "pyddapi"
+def builder
+def minio
+
+pipeline {
+
+    agent {
+        dockerfile {
+            filename 'ci/Dockerfile'
+            dir '.'
+            additionalBuildArgs '--no-cache'
+        }
+    }
+
+    stages {
+        stage('Install') {
+            steps {
+                sh 'make develop'
+            }
+        }
+
+        stage('Unit Tests') {
+            steps {
+                sh 'make unittest'
+            }
+
+            post {
+                always {
+                    junit "${REPORTS_FOLDER}/**/*.xml"
+                    step([$class: 'CoberturaPublisher', coberturaReportFile: "${REPORTS_FOLDER}/coverage.xml"])
+                }
+            }
+        }
+
+        stage('Acceptance Tests') {
+            steps {
+                sh 'make acceptance_test'
+            }
+
+            post {
+                always {
+                    junit "${REPORTS_FOLDER}/**/*.xml"
+                }
+            }
+        }
+
+        stage("Datastores' Integration Tests") {
+            steps {
+
+                sh """wget https://dl.minio.io/server/minio/release/linux-amd64/minio
+                        chmod +x minio"""
+
+                sh 'nohup bash -c "./minio server /data &"'
+                sh 'make integration_db_test MINIO_SERVER=localhost'
+            }
+
+            post {
+                always {
+                    junit "${REPORTS_FOLDER}/**/*.xml"
+                }
+            }
+        }
+
+        stage('Packaging') {
+            steps {
+                sh 'make package'
+            }
+        }
+
+        stage('Sphinx documentation generation') {
+            when { branch 'master'}
+            steps {
+                withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'aws_access',
+                                  usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                    sh "make documentation"
+                    sh "aws s3 sync docs/_build/html s3://datadriver-doc-ddapi"
+                }
+            }
+        }
+
+        stage('Upload dev artefact') {
+            when { not { tag pattern: "\\d+\\.\\d+\\.\\d+", comparator: "REGEXP"} }
+            steps {
+                script {
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'anaconda-cloud',
+                                    usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh "anaconda login --username ${USERNAME} --password ${PASSWORD}"
+                    }
+                    if (env.BRANCH_NAME == 'master') {
+                        sh "anaconda upload --force -u octo --package ${packageName} --label dev ${BUILD_FOLDER}/*"
+                    }
+                    else {
+                        sh "anaconda upload --force -u octo --package ${packageName} --label ${env.BRANCH_NAME} ${BUILD_FOLDER}/*"
+                    }
+                }
+            }
+        }
+
+        stage('Release artefact') {
+            when { tag pattern: "\\d+\\.\\d+\\.\\d+", comparator: "REGEXP"}
+            steps {
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'pypi',
+                usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                    sh "twine upload --skip-existing -p $PASSWORD -u $USERNAME dist/*"
+                }
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'anaconda-cloud',
+                usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                    sh "anaconda login --username ${USERNAME} --password ${PASSWORD}"
+                }
+                sh "anaconda upload --force -u octo --package ${packageName} --label main ${BUILD_FOLDER}/*"
+            }
+        }
+    }
+}

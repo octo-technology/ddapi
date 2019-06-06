@@ -1,0 +1,61 @@
+# Code quality files
+*.py[cod]
+venv*
+activate
+htmlcov
+htmlcov.zip
+coverage.xml
+environment.yml
+
+# C extensions
+*.so
+
+# Packages
+*.egg-info
+dist
+build
+eggs
+parts
+var
+sdist
+develop-eggs
+.installed.cfg
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+out
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+*.swp
+*.swo
+
+# Data Files
+*.tar.bz2
+*.test
+pom.log
+
+# Lab directory
+.idea
+lab
+.DS_Store
+*.iml
+
+ansible/*.retry
+.ipynb_checkpoints/
+
+doc/_build/
+
+.cache/
+dd/tests/acceptance/out/
