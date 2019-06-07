@@ -1,7 +1,7 @@
-[![Anaconda-Server Badge](https://anaconda.org/octo/pyddapi/badges/installer/conda.svg)](https://conda.anaconda.org/octo)
-[![Anaconda-Server Badge](https://anaconda.org/octo/pyddapi/badges/platforms.svg)](https://anaconda.org/octo/pyddapi)
+[![PyPI version](https://badge.fury.io/py/pyddapi.svg)](https://badge.fury.io/py/pyddapi)
 [![Anaconda-Server Badge](https://anaconda.org/octo/pyddapi/badges/latest_release_date.svg)](https://anaconda.org/octo/pyddapi)
 [![Anaconda-Server Badge](https://anaconda.org/octo/pyddapi/badges/version.svg)](https://anaconda.org/octo/pyddapi)
+[![Build Status](http://ec2-52-212-162-0.eu-west-1.compute.amazonaws.com:8080/buildStatus/icon?job=dd-api%2Fmaster)](http://ec2-52-212-162-0.eu-west-1.compute.amazonaws.com:8080/job/dd-api/job/master/)
 
 # DDAPI introduction  
 - [What is it](#what-is-it)  
@@ -98,3 +98,34 @@ You can find the package in [anaconda cloud repository](https://anaconda.org/oct
 ## Contributing  
 In case you want to contribute to the code, do not forget to check our   
 [Developer Guidelines](DEVGUIDE.md)
+
+# Contributors
+
+This repository is a part of the DataDriver project.
+ 
+Since 2016, there were many people who contributed to this project : 
+
+* Ali El Moussawi
+* Arthur Baudry
+* Augustin Grimprel
+* Aurélien Massiot
+* Benjamin Joyen-Conseil
+* Constant Bridon
+* Cyril Vinot
+* Eric Biernat
+* Jeffrey Lucas
+* Nicolas Cavallo
+* Nicolas Frot
+* Matthieu Lagacherie  
+* Mehdi Houacine
+* Pierre Baonla Bassom
+* Rémy Frenoy
+* Romain Ayres
+* Samuel Rochette
+* Thomas Vial
+* Veltin Dupont 
+* Vincent Levorato
+* Yannick Drant
+* Yannick Schini
+* Yasir Khan
+
